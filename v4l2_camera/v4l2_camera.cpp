@@ -8,13 +8,15 @@ v4l2_camera::v4l2_camera(const char *dev_name)
 v4l2_camera::~v4l2_camera()
 {
     deinit();
-}
+} 
 
 int v4l2_camera::init(const char *dev_name, int width, int height, int format)
 {
+    int ret;
     if(dev_name)
         dev_name_ = dev_name;
-    init(width, height, format);
+    ret = init(width, height, format);
+    return ret;
 }
 
 int v4l2_camera::init(int width, int height, int format)

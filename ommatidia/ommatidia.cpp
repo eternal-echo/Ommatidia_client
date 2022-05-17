@@ -21,9 +21,9 @@ int Ommatidia::init(const char *host, int port)
     }
 
     cameras_.push_back(new v4l2_camera("/dev/video0"));
-    cameras_.push_back(new v4l2_camera("/dev/video2"));
+    cameras_.push_back(new v4l2_camera("/dev/video1"));
     for(auto camera : cameras_) {
-        ret = camera->init();
+        ret = camera->init(320, 240, V4L2_PIX_FMT_MJPEG);
         if(ret < 0) {
             std::cout<< "Failed to initialize camera" << std::endl;
             return -1;
@@ -46,6 +46,7 @@ int Ommatidia::deinit()
     }
     cameras_.clear();
     client_.deinit();
+    return 0;
 }
 
 int Ommatidia::run()
@@ -85,6 +86,7 @@ int Ommatidia::ctrl()
         state_ = &Ommatidia::ctrl;
         break;
     }
+    return 0;
 }
 
 int Ommatidia::thread_preview()
@@ -169,7 +171,13 @@ int Ommatidia::capture()
                 ret = -1;
                 break;
             }
+            ret = client_.send((unsigned char *)&buffers[i].length, sizeof(buffers[i].length));
+            if(ret < 0) {
+                std::cout<< "Failed to send length" << std::endl;
+                break;
+            }
             std::cout << "send jpeg data, length: " <<  buffers[i].length << std::endl;
+
             ret = client_.send(buffers[i].start, buffers[i].length);
             if(ret < 0) {
                 std::cout<< "Failed to send jpeg data, try again" << std::endl;
@@ -191,4 +199,5 @@ int Ommatidia::capture()
     } while(ret < 0); // retry if failed
         
     state_ = &Ommatidia::ctrl;
+    return 0;
 }

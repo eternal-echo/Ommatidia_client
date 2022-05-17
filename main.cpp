@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     Ommatidia ommatidia;
     int ret;
     // add cameras to ommatidia 
-    ret = ommatidia.init("127.0.0.1", 8000);
+    ret = ommatidia.init("192.168.43.169", 8000);
     if(ret < 0) {
         std::cout<< "Failed to initialize ommatidia" << std::endl;
         return -1;

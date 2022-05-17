@@ -18,7 +18,7 @@ class Ommatidia
 public:
     Ommatidia();
     ~Ommatidia();
-    int init(const char *host = "127.0.0.1", int port = 8000);
+    int init(const char *host = "192.163.43.169", int port = 8000);
     int deinit();
     int run();
     int ctrl();
