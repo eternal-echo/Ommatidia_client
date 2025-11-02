@@ -14,7 +14,7 @@
 #define WIDTH  640
 #define HEIGHT 480
 #define FPS    30
-#define FRAME_SIZE (WIDTH * HEIGHT * 3) // RGB24
+#define VIRTUAL_FRAME_SIZE (WIDTH * HEIGHT * 3) // RGB24
 
 static struct v4l2_device vdev = {
     .name = "virtual_v4l2",
@@ -31,9 +31,9 @@ static u8 *frames[3]; // red, green, blue
 static void fill_frames(void)
 {
     int i;
-    frames[0] = kzalloc(FRAME_SIZE, GFP_KERNEL); // red
-    frames[1] = kzalloc(FRAME_SIZE, GFP_KERNEL); // green
-    frames[2] = kzalloc(FRAME_SIZE, GFP_KERNEL); // blue
+    frames[0] = kzalloc(VIRTUAL_FRAME_SIZE, GFP_KERNEL); // red
+    frames[1] = kzalloc(VIRTUAL_FRAME_SIZE, GFP_KERNEL); // green
+    frames[2] = kzalloc(VIRTUAL_FRAME_SIZE, GFP_KERNEL); // blue
     for (i = 0; i < WIDTH * HEIGHT; i++) {
         frames[0][i*3+0] = 0xFF; // R
         frames[0][i*3+1] = 0x00; // G
@@ -83,7 +83,7 @@ static int vidioc_g_fmt_vid_cap(struct file *file, void *priv, struct v4l2_forma
     f->fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
     f->fmt.pix.field = V4L2_FIELD_NONE;
     f->fmt.pix.bytesperline = WIDTH * 3;
-    f->fmt.pix.sizeimage = FRAME_SIZE;
+    f->fmt.pix.sizeimage = VIRTUAL_FRAME_SIZE;
     f->fmt.pix.colorspace = V4L2_COLORSPACE_SRGB;
     return 0;
 }
@@ -108,8 +108,8 @@ static ssize_t virtual_v4l2_read(struct file *file, char __user *buf, size_t cou
     u8 *frame_data;
     int current_frame;
 
-    if (count > FRAME_SIZE)
-        count = FRAME_SIZE;
+    if (count > VIRTUAL_FRAME_SIZE)
+        count = VIRTUAL_FRAME_SIZE;
     
     // 使用自旋锁获取当前帧索引
     spin_lock_irqsave(&frame_lock, frame_lock_flags);

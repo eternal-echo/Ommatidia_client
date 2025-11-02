@@ -39,3 +39,16 @@ cmake-build-debug/
 .idea/
 
 .vscode/
+
+# kernel module
+*.ko
+*.mod.c
+*.cmd
+*.o
+*.o.cmd
+*.ko.cmd
+*.ko.d
+*.ko.dwo
+*.ko.dwo.cmd
+*.ko.dwo.d
+*.ko.dwo.dwo
